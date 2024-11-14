@@ -1,0 +1,100 @@
+{
+  "expectations": [
+    {
+      "kwargs": {
+        "column": "CustomerID"
+      },
+      "meta": {},
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "kwargs": {
+        "column": "CustomerID"
+      },
+      "meta": {},
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "kwargs": {
+        "column": "CustomerName"
+      },
+      "meta": {},
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "kwargs": {
+        "column": "CustomerName",
+        "min_value": 1,
+        "max_value": 255
+      },
+      "meta": {},
+      "type": "expect_column_value_lengths_to_be_between"
+    },
+    {
+      "kwargs": {
+        "column": "Email"
+      },
+      "meta": {},
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "kwargs": {
+        "column": "Email",
+        "regex": "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"
+      },
+      "meta": {},
+      "type": "expect_column_values_to_match_regex"
+    },
+    {
+      "kwargs": {
+        "column": "PurchaseAmount"
+      },
+      "meta": {},
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "kwargs": {
+        "column": "PurchaseAmount",
+        "min_value": 0.00,
+        "max_value": 10000.00
+      },
+      "meta": {},
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "kwargs": {
+        "column": "Status",
+        "value_set": [
+          "Active",
+          "Inactive",
+          "Pending"
+        ]
+      },
+      "meta": {},
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "kwargs": {
+        "column_list": [
+          "CustomerID",
+          "CustomerName",
+          "Email",
+          "CreatedAt",
+          "PurchaseAmount",
+          "Status",
+          "Country",
+          "PhoneNumber",
+          "LastPurchaseDate"
+        ]
+      },
+      "meta": {},
+      "type": "expect_table_columns_to_match_ordered_list"
+    }
+  ],
+  "id": "8ecf9023-f9ac-41cb-9cc7-ead6ca39a84b",
+  "meta": {
+    "great_expectations_version": "1.0.5"
+  },
+  "name": "my_expectation_suite",
+  "notes": null
+}

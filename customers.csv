@@ -1,0 +1,6 @@
+CustomerID,CustomerName,Email,CreatedAt,PurchaseAmount,Status,Country,PhoneNumber,LastPurchaseDate
+1,John Doe,john.doe@example.com,2023-07-01 00:00:00.000,150.75,Active,USA,555-1234,2023-08-15
+2,Jane Smith,jane.smith@example.com,2023-06-15 00:00:00.000,300.20,Active,Canada,555-5678,2023-08-22
+3,Emily Johnson,emily.johnson@example.com,2023-05-10 00:00:00.000,0.00,Inactive,UK,555-1111,NULL
+4,Robert Brown,robert.brown@example.com,2023-07-25 00:00:00.000,1200.50,Pending,USA,555-2222,2023-09-01
+5,Michael White,michael.white@example.com,2023-07-18 00:00:00.000,550.10,Active,Germany,555-3333,2023-08-28

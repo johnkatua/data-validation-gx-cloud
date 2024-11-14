@@ -1,0 +1,22 @@
+{
+  "data": {
+    "asset": {
+      "id": "8240dca3-bcd5-4aaf-b056-b46eb2f225fc",
+      "name": "my_pandas_data_asset"
+    },
+    "batch_definition": {
+      "id": "78f0f15a-ab82-4444-b86f-fd1a8aa8271f",
+      "name": "my_batch_definition"
+    },
+    "datasource": {
+      "id": "340483ec-3171-4b1d-94d5-094c7b7a604a",
+      "name": "e1060f6b-ea85-4de7-84a0-544db99a1c1d"
+    }
+  },
+  "id": "93abdb48-4e04-47ed-ae74-92fa4aa967b6",
+  "name": "my_validation_definition",
+  "suite": {
+    "id": "8ecf9023-f9ac-41cb-9cc7-ead6ca39a84b",
+    "name": "my_expectation_suite"
+  }
+}
