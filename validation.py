@@ -3,7 +3,7 @@ import pandas as pd
 import great_expectations as gx
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from great_expectations.exceptions import DatasourceError, DataAssetNotFoundError
+from great_expectations.exceptions import DatasourceError, ExpectationSuiteNotFoundError
 
 # Load environment variables from .env file
 load_dotenv()
@@ -108,6 +108,46 @@ def validate_config(config, required_keys):
   missing_keys = [key for key in required_keys if key not in config or not config[key]]
   if missing_keys:
     raise ValueError(f"Missing required configuration keys: {', '.join(missing_keys)}")
+
+def update_expectation_suite(context, csv_data, db_data, mapping, expectation_suite_name):
+  """
+  Update or create an expectation suite for validating data.
+
+  Args:
+    context: GE DataContext object.
+    csv_data: DataFrame loaded from the CSV.
+    db_data: DataFrame loaded from the database.
+    mapping: Dictionary mapping CSV columns to database table columns.
+    expectation_suite_name: Name of the expectation suite name.
+  """
+  try:
+    # Load the existing expectation suite if it exists
+    suite = context.get_expectation_suite(expectation_suite_name)
+  except ExpectationSuiteNotFoundError:
+    # Create a new expectation suite if does not exist
+    suite = context.create_expectation_suite(expectation_suite_name)
+
+  # Iterate through column mappings and add/update expectations
+  for csv_col, db_col in mapping.items():
+    if csv_col in csv_data.columns and db_col in db_data.columns:
+      # Prepare the data for validation
+      validation_data = pd.concat([csv_data[csv_col], db_data[db_col]], axis=1)
+      validation_data.columns = [csv_col, db_col]
+
+      # Create a validator
+      validator = context.get_validator(batch=validation_data)
+
+      # Add/update expectation for column mapping
+      validator.expect_column_pair_values_to_be_equal(
+        column_A=csv_col,
+        column_B=db_col
+      )
+
+      # Add/update expectation to check for non-null values in the CSV column
+      validator.expect_column_values_to_not_be_null(column=csv_col)
+
+  # Save the updated or new expectation suite
+  context.save_expectation_suite(suite)
 
 def main():
   # Load configuration
