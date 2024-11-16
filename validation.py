@@ -131,30 +131,14 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   # Iterate through column mappings and add/update expectations
   for csv_col, db_col in mapping.items():
     if csv_col in csv_data.columns and db_col in db_data.columns:
-      pair_expectation = context.expectations.ExpectColumnPairValuesToBeEqual(
-        column_a=csv_col,
-        column_b=db_col
+      # Update suite file with new expectations
+      pair_expectation = gx.expectations.ExpectColumnPairValuesToBeEqual(
+        column_A=csv_col,
+        column_B=db_col
       )
       suite.add_expectation(
         pair_expectation
       )
-      # Prepare the data for validation
-      # validation_data = pd.concat([csv_data[csv_col], db_data[db_col]], axis=1)
-      # validation_data.columns = [csv_col, db_col]
-
-      # print("Validation Data:::", validation_data)
-
-      # # Create a validator
-      # validator = context.get_validator(batch=validation_data)
-
-      # # Add/update expectation for column mapping
-      # validator.expect_column_pair_values_to_be_equal(
-      #   column_A=csv_col,
-      #   column_B=db_col
-      # )
-
-      # # Add/update expectation to check for non-null values in the CSV column
-      # validator.expect_column_values_to_not_be_null(column=csv_col)
 
   print("Suite", suite)
   # Save the updated or new expectation suite
