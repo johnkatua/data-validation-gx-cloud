@@ -21,6 +21,17 @@ def initialize_context(mode="cloud"):
   """Initialize and return the GE DataContext."""
   return gx.get_context(mode=mode)
 
+def get_column_mapping():
+  """
+  Define the mapping of CSV columns to database table columns
+
+  Returns:
+    dict: A dictionary mapping CSV columns to database table columns.
+  """
+  return {
+    "CustomerID": "CustomerID"
+  }
+
 def load_data_from_db(conn_str, query):
   """
   Connect to an MSSQL database and load data into a DataFrame
