@@ -29,7 +29,7 @@ def get_column_mapping():
     dict: A dictionary mapping CSV columns to database table columns.
   """
   return {
-    "CustomerID": "CustomerID"
+    "CustomerID_CSV": "CustomerID"
   }
 
 def load_data_from_db(conn_str, query):
@@ -122,7 +122,8 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   """
   try:
     # Load the existing expectation suite if it exists
-    suite = context.get_expectation_suite(expectation_suite_name)
+    suite = context.suites.get(name=expectation_suite_name)
+    #get_expectation_suite(expectation_suite_name)
   except ExpectationSuiteNotFoundError:
     # Create a new expectation suite if does not exist
     suite = context.create_expectation_suite(expectation_suite_name)
@@ -130,24 +131,35 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   # Iterate through column mappings and add/update expectations
   for csv_col, db_col in mapping.items():
     if csv_col in csv_data.columns and db_col in db_data.columns:
-      # Prepare the data for validation
-      validation_data = pd.concat([csv_data[csv_col], db_data[db_col]], axis=1)
-      validation_data.columns = [csv_col, db_col]
-
-      # Create a validator
-      validator = context.get_validator(batch=validation_data)
-
-      # Add/update expectation for column mapping
-      validator.expect_column_pair_values_to_be_equal(
-        column_A=csv_col,
-        column_B=db_col
+      pair_expectation = context.expectations.ExpectColumnPairValuesToBeEqual(
+        column_a=csv_col,
+        column_b=db_col
       )
+      suite.add_expectation(
+        pair_expectation
+      )
+      # Prepare the data for validation
+      # validation_data = pd.concat([csv_data[csv_col], db_data[db_col]], axis=1)
+      # validation_data.columns = [csv_col, db_col]
 
-      # Add/update expectation to check for non-null values in the CSV column
-      validator.expect_column_values_to_not_be_null(column=csv_col)
+      # print("Validation Data:::", validation_data)
 
+      # # Create a validator
+      # validator = context.get_validator(batch=validation_data)
+
+      # # Add/update expectation for column mapping
+      # validator.expect_column_pair_values_to_be_equal(
+      #   column_A=csv_col,
+      #   column_B=db_col
+      # )
+
+      # # Add/update expectation to check for non-null values in the CSV column
+      # validator.expect_column_values_to_not_be_null(column=csv_col)
+
+  print("Suite", suite)
   # Save the updated or new expectation suite
-  context.save_expectation_suite(suite)
+  suite.save()
+  print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
 
 def main():
   # Load configuration
@@ -161,6 +173,10 @@ def main():
   data_asset_name = config.get("data_asset_name")
   connection_string = config.get("connection_string")
   db_query = config.get("db_query")
+  suite_name = config.get("suite_name")
+
+  # Columns mapping
+  columns_mapping = get_column_mapping()
 
   # Initialize GE context
   context = initialize_context()
@@ -177,11 +193,19 @@ def main():
   # Load data from the local MSSQL database
   df_mssql = load_data_from_db(conn_str=connection_string, query=db_query)
 
-  print("Data preview:\n", df.head())
+  # print("Data preview:\n", df.head())
 
-  print("MSSQL Data preview:\n", df_mssql.head())
+  # print("MSSQL Data preview:\n", df_mssql.head())
 
   print("Available data source:", context.list_datasources())
+
+  update_expectation_suite(
+    context=context,
+    csv_data=df,
+    db_data=df_mssql,
+    mapping=columns_mapping,
+    expectation_suite_name=suite_name
+  )
 
 if __name__ == "__main__":
   main()
