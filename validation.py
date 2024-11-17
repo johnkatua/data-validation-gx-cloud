@@ -86,16 +86,6 @@ def add_data_asset(context, data_source_name, data_asset_name):
   except Exception as e:
     raise RuntimeError(f"Unexpected error while adding data asset '{data_asset_name}': {e}")
 
-def add_batch_definition(context, data_source_name, data_asset_name, batch_name):
-  """
-  Add a batch definition to GE context
-
-  Args:
-    context: GE context
-    data_source_name: Name of the data source
-    data_asset_name: Name of the data asset
-    batch_name: 
-  """
 
 def load_data(file_path="customers.csv"):
   """Load data into a DataFrame from a CSV file."""
@@ -163,6 +153,37 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
 
 # def run_validation(context, df, suite_name):
 
+def create_batch_definition(context, source_name, asset_name, batch_name):
+  """
+  A function to describe how data within the DataFrame should be retrieved.
+
+  Args:
+    context: The GE data context
+    source_name: The source of our data
+    asset_name: The name of the data asset
+    batch_name: The name of the batch
+  """
+  try:
+    # Retrieve the data asset
+    data_asset = context.data_sources.get(source_name).get_asset(asset_name)
+    
+    # Check if the batch definition already exists
+    existing_batches = data_asset.get_batch_definitions()
+    if any(batch.batch_identifiers.get("batch_name") == batch_name for batch in existing_batches):
+      print(f"Batch definition '{batch_name}' already exists. Skipping addition.")
+      return
+
+    # Add the batch definition if it doesn't exist
+    data_asset.add_batch_definition_whole_dataframe(batch_name)
+    print(f"Batch definition '{batch_name}' added successfully.")
+
+  except gx.exceptions.BatchDefinitionNotFoundError as e:
+    raise RuntimeError(f"Error adding a batch definition: {e}")
+
+  except KeyError:
+    raise RuntimeError(f"Data source '{source_name}' or asset '{asset_name}' not found.")
+
+
 
 def main():
   # Load configuration
@@ -177,6 +198,7 @@ def main():
   connection_string = config.get("connection_string")
   db_query = config.get("db_query")
   suite_name = config.get("suite_name")
+  batch_name = config.get("batch_name")
 
   # Columns mapping
   columns_mapping = get_column_mapping()
@@ -189,6 +211,9 @@ def main():
 
   # Add data asset to the data source
   add_data_asset(context, data_source_name, data_asset_name)
+
+  # Create a batch definition
+  create_batch_definition(context, data_source_name, data_asset_name, batch_name)
 
   # Load data for further validation
   df = load_data()
