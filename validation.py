@@ -183,7 +183,22 @@ def create_batch_definition(context, source_name, asset_name, batch_name):
   except KeyError:
     raise RuntimeError(f"Data source '{source_name}' or asset '{asset_name}' not found.")
 
+def run_validation(context, source_name, asset_name, batch_name, batch_params):
+  try:
+    batch_definition = (
+      context.data_sources.get(source_name)
+      .get_asset(asset_name)
+      .get_batch_definition(batch_name)
+    )
 
+    # Get the dataframe as a Batch
+    batch = batch_definition.get_batch(batch_parameters=batch_params)
+
+    results = batch.validate()
+
+    print(results.describe())
+  except Exception as e:
+    raise RuntimeError(f"Something went wrong: {e}")
 
 def main():
   # Load configuration
@@ -234,6 +249,9 @@ def main():
     mapping=columns_mapping,
     expectation_suite_name=suite_name
   )
+
+  # Run validations
+  
 
 if __name__ == "__main__":
   main()
