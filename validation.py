@@ -166,17 +166,17 @@ def create_batch_definition(context, source_name, asset_name, batch_name):
   try:
     # Retrieve the data asset
     data_asset = context.data_sources.get(source_name).get_asset(asset_name)
+
+    print(data_asset)
     
     # Check if the batch definition already exists
-    existing_batches = data_asset.get_batch_definitions()
-    if any(batch.batch_identifiers.get("batch_name") == batch_name for batch in existing_batches):
+    if not(any(batch.name == batch_name for batch in data_asset.batch_definitions)):
+      # Add the batch definition if it doesn't exist
+      data_asset.add_batch_definition_whole_dataframe(batch_name)
+      print(f"Batch definition '{batch_name}' added successfully.")
+    else:
       print(f"Batch definition '{batch_name}' already exists. Skipping addition.")
       return
-
-    # Add the batch definition if it doesn't exist
-    data_asset.add_batch_definition_whole_dataframe(batch_name)
-    print(f"Batch definition '{batch_name}' added successfully.")
-
   except gx.exceptions.BatchDefinitionNotFoundError as e:
     raise RuntimeError(f"Error adding a batch definition: {e}")
 
