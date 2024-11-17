@@ -86,6 +86,16 @@ def add_data_asset(context, data_source_name, data_asset_name):
   except Exception as e:
     raise RuntimeError(f"Unexpected error while adding data asset '{data_asset_name}': {e}")
 
+def add_batch_definition(context, data_source_name, data_asset_name, batch_name):
+  """
+  Add a batch definition to GE context
+
+  Args:
+    context: GE context
+    data_source_name: Name of the data source
+    data_asset_name: Name of the data asset
+    batch_name: 
+  """
 
 def load_data(file_path="customers.csv"):
   """Load data into a DataFrame from a CSV file."""
@@ -147,12 +157,12 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
           pair_expectation
         )
 
-  print("Suite", suite)
   # Save the updated or new expectation suite
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
 
-# def validate_date
+# def run_validation(context, df, suite_name):
+
 
 def main():
   # Load configuration
@@ -190,7 +200,7 @@ def main():
 
   # print("MSSQL Data preview:\n", df_mssql.head())
 
-  # print("Available data source:", context.list_datasources())
+  print("Available data source:", context.list_datasources())
 
   update_expectation_suite(
     context=context,
