@@ -132,7 +132,7 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   print(df)
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
-  return suite
+  return suite, df
 
 def create_batch_definition(context, source_name, asset_name, batch_name):
   """
@@ -249,7 +249,6 @@ def etl_validation_dataframe(csv_data, db_data, mapping, suite):
 
   return validation_df
 
-
 def main():
   # Load configuration
   config = load_config()
@@ -292,13 +291,19 @@ def main():
 
   print("Available data source:", context.list_datasources())
 
-  source_suite = update_expectation_suite(
+  source_suite, _ = update_expectation_suite(
     context=context,
     csv_data=df,
     db_data=df_mssql,
     mapping={},
     expectation_suite_name=suite_name
   )
+
+  # target_suite, validation_df = update_expectation_suite(
+  #   context,
+  #   csv_data=df,
+  #   db_data=df_mssql
+  # )
 
   etl_validation(
     context,
