@@ -130,26 +130,6 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   
   df = etl_validation_dataframe(csv_data, db_data, mapping, suite)
   print(df)
-  # Iterate through column mappings and add/update expectations
-  # for csv_col, db_col in mapping.items():
-  #   if csv_col in csv_data.columns and db_col in db_data.columns:
-  #     # Check if the expectation already exist
-  #     expe ctation_exists = any(
-  #       exp.expectation_type == "expect_column_pair_values_to_be_equal"
-  #       for exp in suite.expectations
-  #     )
-
-  #     if not expectation_exists:
-  #       # Add the new column pair expectation if it does not exist
-  #       pair_expectation = gx.expectations.ExpectColumnPairValuesToBeEqual(
-  #         column_A=csv_col,
-  #         column_B=db_col
-  #       )
-  #       suite.add_expectation(
-  #         pair_expectation
-  #       )
-
-  # Save the updated or new expectation suite
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
   return suite
@@ -224,7 +204,7 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
     context, source_name, asset_name, batch_name, source_suite, source_df)
   
   print(source_results)
-  
+
   if not source_results["success"]:
     print("Source validation failed:", source_results)
     return  
