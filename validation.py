@@ -150,6 +150,7 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   # Save the updated or new expectation suite
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
+  return suite
 
 # def run_validation(context, df, suite_name):
 
@@ -183,7 +184,7 @@ def create_batch_definition(context, source_name, asset_name, batch_name):
   except KeyError:
     raise RuntimeError(f"Data source '{source_name}' or asset '{asset_name}' not found.")
 
-def run_validation(context, source_name, asset_name, batch_name, batch_params):
+def run_validation(context, source_name, asset_name, batch_name, suite, batch_params):
   try:
     batch_definition = (
       context.data_sources.get(source_name)
@@ -194,7 +195,7 @@ def run_validation(context, source_name, asset_name, batch_name, batch_params):
     # Get the dataframe as a Batch
     batch = batch_definition.get_batch(batch_parameters=batch_params)
 
-    results = batch.validate()
+    results = batch.validate(suite)
 
     print(results.describe())
   except Exception as e:
@@ -242,7 +243,7 @@ def main():
 
   print("Available data source:", context.list_datasources())
 
-  update_expectation_suite(
+  suite = update_expectation_suite(
     context=context,
     csv_data=df,
     db_data=df_mssql,
@@ -250,8 +251,19 @@ def main():
     expectation_suite_name=suite_name
   )
 
+  # Batch parameters
+  batch_params = {"dataframe": df}
+
   # Run validations
-  
+  run_validation(
+    context,
+    data_source_name,
+    data_asset_name,
+    batch_name,
+    suite,
+    batch_params
+  )
+
 
 if __name__ == "__main__":
   main()
