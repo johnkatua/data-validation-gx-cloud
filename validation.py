@@ -299,7 +299,13 @@ def main():
     expectation_suite_name=suite_name
   )
 
-  target_suite, validation_df = update_expectation_suite()
+  target_suite, validation_df = update_expectation_suite(
+    context=context,
+    csv_data=df,
+    db_data=df_mssql,
+    mapping=columns_mapping,
+    expectation_suite_name=suite_name
+  )
 
   etl_validation(
     context,
