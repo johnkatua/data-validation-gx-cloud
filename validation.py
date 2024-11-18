@@ -127,12 +127,14 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   except ExpectationSuiteNotFoundError:
     # Create a new expectation suite if does not exist
     suite = context.create_expectation_suite(expectation_suite_name)
-
+  
+  df = etl_validation_dataframe(csv_data, db_data, mapping, suite)
+  print(df)
   # Iterate through column mappings and add/update expectations
   # for csv_col, db_col in mapping.items():
   #   if csv_col in csv_data.columns and db_col in db_data.columns:
   #     # Check if the expectation already exist
-  #     expectation_exists = any(
+  #     expe ctation_exists = any(
   #       exp.expectation_type == "expect_column_pair_values_to_be_equal"
   #       for exp in suite.expectations
   #     )
@@ -221,11 +223,13 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
   source_results = run_validation(
     context, source_name, asset_name, batch_name, source_suite, source_df)
   
+  print(source_results)
+  
   if not source_results["success"]:
     print("Source validation failed:", source_results)
     return  
 
-def etl_validation_dataframe(csv_data, db_data, mapping):
+def etl_validation_dataframe(csv_data, db_data, mapping, suite):
   """
   Prepares a DF for validation after mapping of data assets
 
@@ -233,6 +237,7 @@ def etl_validation_dataframe(csv_data, db_data, mapping):
     csv_data: DataFrame loaded from the CSV file
     db_data: DataFrame loaded from the database.
     mapping (dict): Dictionary mapping CSV columns to db columns.
+    suite: Expectation suite file
 
   Returns:
     pd.DataFrame: A combined DataFrame containing CSV data and database data
@@ -247,6 +252,20 @@ def etl_validation_dataframe(csv_data, db_data, mapping):
       db_col_renamed = f"{db_col}_db" if db_col in csv_data.columns else db_col
 
       validation_df[db_col_renamed] = db_data[db_col]
+
+      expectation_exists = any(
+        exp.expectation_type == "expect_column_pair_values_to_be_equal"
+        for exp in suite.expectations
+      )
+
+      if not expectation_exists:
+        suite.add_expectation(
+          expectation_type="expect_column_pair_values_to_be_equal",
+          kwargs={
+            "column_A": csv_col,
+            "column_B": db_col_renamed
+          }
+        )
 
   return validation_df
 
@@ -297,7 +316,7 @@ def main():
     context=context,
     csv_data=df,
     db_data=df_mssql,
-    mapping=columns_mapping,
+    mapping={},
     expectation_suite_name=suite_name
   )
 
