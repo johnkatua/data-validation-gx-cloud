@@ -29,7 +29,7 @@ def get_column_mapping():
     dict: A dictionary mapping CSV columns to database table columns.
   """
   return {
-    "CustomerID_CSV": "CustomerID"
+    "CustomerID": "CustomerID"
   }
 
 def load_data_from_db(conn_str, query):
@@ -240,7 +240,7 @@ def etl_validation_dataframe(csv_data, db_data, mapping):
 
   validation_df = {}
   for csv_col, db_col in mapping.items():
-    if csv_col in csv_col.columns:
+    if csv_col in csv_data.columns:
       validation_df[csv_col] = csv_data[csv_col]
     if db_col in db_data.columns:
       # Rename the db column if it has the same name as a CSV column
@@ -293,19 +293,11 @@ def main():
 
   print("Available data source:", context.list_datasources())
 
-  suite = update_expectation_suite(
-    context=context,
-    csv_data=df,
-    db_data=df_mssql,
-    mapping={},
-    expectation_suite_name=suite_name
-  )
-
   source_suite = update_expectation_suite(
     context=context,
     csv_data=df,
     db_data=df_mssql,
-    mapping={},
+    mapping=columns_mapping,
     expectation_suite_name=suite_name
   )
 
