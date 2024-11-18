@@ -208,6 +208,16 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
   if not source_results["success"]:
     print("Source validation failed:", source_results)
     return  
+  
+  print("Validating target data...")
+  target_results = run_validation(
+    context, source_name, asset_name, batch_name, target_suite, target_df
+  )
+  if not target_results["success"]:
+    print("Target validation failed:", target_results)
+    return
+
+  print("ETL validation completed successfully!")
 
 def etl_validation_dataframe(csv_data, db_data, mapping, suite):
   """
@@ -262,6 +272,7 @@ def main():
   connection_string = config.get("connection_string")
   db_query = config.get("db_query")
   suite_name = config.get("suite_name")
+  target_suite_name = config.get("target_suite_name")
   batch_name = config.get("batch_name")
 
   # Columns mapping
@@ -304,7 +315,7 @@ def main():
     csv_data=df,
     db_data=df_mssql,
     mapping=columns_mapping,
-    expectation_suite_name=suite_name
+    expectation_suite_name=target_suite_name
   )
 
   etl_validation(
