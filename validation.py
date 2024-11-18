@@ -197,8 +197,8 @@ def run_validation(context, source_name, asset_name, batch_name, suite, df):
     batch = batch_definition.get_batch(batch_parameters=batch_params)
 
     results = batch.validate(suite)
-    print(results)
-    return results.describe()
+    return results
+    # return results.describe()
   except Exception as e:
     raise RuntimeError(f"Something went wrong: {e}")
 
@@ -225,8 +225,7 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
   
   if not source_results["success"]:
     print("Source validation failed:", source_results)
-    return
-  
+    return  
 
 def main():
   # Load configuration
@@ -296,7 +295,6 @@ def main():
     source_suite=source_suite,
     target_suite=""
   )
-
 
 if __name__ == "__main__":
   main()
