@@ -197,17 +197,20 @@ def run_validation(context, source_name, asset_name, batch_name, suite, df):
     batch = batch_definition.get_batch(batch_parameters=batch_params)
 
     results = batch.validate(suite)
-
-    print(results.describe())
+    print(results)
+    return results.describe()
   except Exception as e:
     raise RuntimeError(f"Something went wrong: {e}")
 
-def etl_validation(context, source_df, target_df, source_suite, target_suite):
+def etl_validation(context, source_name, asset_name, batch_name, source_df, target_df, source_suite, target_suite):
   """
   Perform Etl validations
 
   Args:
     context: GE data context.
+    source_name: Source used by GE
+    asset_name: Name of the asset to be validated
+    batch_name: Batch data to be validated
     source_df: Source data
     target_df: Loaded data
     source_suite: Expectations suite for source validation.
@@ -215,7 +218,15 @@ def etl_validation(context, source_df, target_df, source_suite, target_suite):
   """
 
   print("Validating Transformed Data...")
-  source_results = run_validation(context,)
+  source_results = run_validation(
+    context, source_name, asset_name, batch_name, source_suite, source_df)
+  
+  print("source_results", source_results)
+  
+  if not source_results["success"]:
+    print("Source validation failed:", source_results)
+    return
+  
 
 def main():
   # Load configuration
@@ -263,18 +274,27 @@ def main():
     context=context,
     csv_data=df,
     db_data=df_mssql,
-    mapping=columns_mapping,
+    mapping={},
     expectation_suite_name=suite_name
   )
 
-  # Run validations
-  run_validation(
+  source_suite = update_expectation_suite(
+    context=context,
+    csv_data=df,
+    db_data=df_mssql,
+    mapping={},
+    expectation_suite_name=suite_name
+  )
+
+  etl_validation(
     context,
     data_source_name,
     data_asset_name,
     batch_name,
-    suite,
-    df
+    source_df=df,
+    target_df=None,
+    source_suite=source_suite,
+    target_suite=""
   )
 
 
