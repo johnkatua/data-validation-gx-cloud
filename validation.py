@@ -182,13 +182,16 @@ def create_batch_definition(context, source_name, asset_name, batch_name):
   except KeyError:
     raise RuntimeError(f"Data source '{source_name}' or asset '{asset_name}' not found.")
 
-def run_validation(context, source_name, asset_name, batch_name, suite, batch_params):
+def run_validation(context, source_name, asset_name, batch_name, suite, df):
   try:
     batch_definition = (
       context.data_sources.get(source_name)
       .get_asset(asset_name)
       .get_batch_definition(batch_name)
     )
+
+    # Batch parameters
+    batch_params = {"dataframe": df}
 
     # Get the dataframe as a Batch
     batch = batch_definition.get_batch(batch_parameters=batch_params)
@@ -198,6 +201,21 @@ def run_validation(context, source_name, asset_name, batch_name, suite, batch_pa
     print(results.describe())
   except Exception as e:
     raise RuntimeError(f"Something went wrong: {e}")
+
+def etl_validation(context, source_df, target_df, source_suite, target_suite):
+  """
+  Perform Etl validations
+
+  Args:
+    context: GE data context.
+    source_df: Source data
+    target_df: Loaded data
+    source_suite: Expectations suite for source validation.
+    target_suite: Expectation suite for target validation.
+  """
+
+  print("Validating Transformed Data...")
+  source_results = run_validation(context,)
 
 def main():
   # Load configuration
@@ -249,9 +267,6 @@ def main():
     expectation_suite_name=suite_name
   )
 
-  # Batch parameters
-  batch_params = {"dataframe": df}
-
   # Run validations
   run_validation(
     context,
@@ -259,7 +274,7 @@ def main():
     data_asset_name,
     batch_name,
     suite,
-    batch_params
+    df
   )
 
 
