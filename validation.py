@@ -152,8 +152,6 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
   return suite
 
-# def run_validation(context, df, suite_name):
-
 def create_batch_definition(context, source_name, asset_name, batch_name):
   """
   A function to describe how data within the DataFrame should be retrieved.
