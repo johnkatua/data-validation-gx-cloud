@@ -221,8 +221,6 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
   source_results = run_validation(
     context, source_name, asset_name, batch_name, source_suite, source_df)
   
-  print("source_results", source_results)
-  
   if not source_results["success"]:
     print("Source validation failed:", source_results)
     return  
