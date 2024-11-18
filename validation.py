@@ -129,23 +129,23 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
     suite = context.create_expectation_suite(expectation_suite_name)
 
   # Iterate through column mappings and add/update expectations
-  for csv_col, db_col in mapping.items():
-    if csv_col in csv_data.columns and db_col in db_data.columns:
-      # Check if the expectation already exist
-      expectation_exists = any(
-        exp.expectation_type == "expect_column_pair_values_to_be_equal"
-        for exp in suite.expectations
-      )
+  # for csv_col, db_col in mapping.items():
+  #   if csv_col in csv_data.columns and db_col in db_data.columns:
+  #     # Check if the expectation already exist
+  #     expectation_exists = any(
+  #       exp.expectation_type == "expect_column_pair_values_to_be_equal"
+  #       for exp in suite.expectations
+  #     )
 
-      if not expectation_exists:
-        # Add the new column pair expectation if it does not exist
-        pair_expectation = gx.expectations.ExpectColumnPairValuesToBeEqual(
-          column_A=csv_col,
-          column_B=db_col
-        )
-        suite.add_expectation(
-          pair_expectation
-        )
+  #     if not expectation_exists:
+  #       # Add the new column pair expectation if it does not exist
+  #       pair_expectation = gx.expectations.ExpectColumnPairValuesToBeEqual(
+  #         column_A=csv_col,
+  #         column_B=db_col
+  #       )
+  #       suite.add_expectation(
+  #         pair_expectation
+  #       )
 
   # Save the updated or new expectation suite
   suite.save()
@@ -235,7 +235,24 @@ def etl_validation_dataframe(csv_data, db_data, mapping):
     csv_data: DataFrame loaded from the CSV file
     db_data: DataFrame loaded from the database.
     mapping (dict): Dictionary mapping CSV columns to db columns.
+
+  Returns:
+    pd.DataFrame: A combined DataFrame containing CSV data and database data
   """
+
+  validation_df = {}
+  for csv_col, db_col in mapping.items():
+    if csv_col in csv_col.columns:
+      validation_df[csv_col] = csv_data[csv_col]
+    if db_col in db_data.columns:
+      # Rename the db column if it has the same name as a CSV column
+      db_col_renamed = f"{db_col}_db" if db_col in csv_data.columns else db_col
+
+      validation_df[db_col_renamed] = db_data[db_col]
+
+  return validation_df
+
+
 def main():
   # Load configuration
   config = load_config()
