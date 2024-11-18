@@ -250,12 +250,20 @@ def etl_validation_dataframe(csv_data, db_data, mapping, suite):
 
       if not expectation_exists:
         suite.add_expectation(
-          expectation_type="expect_column_pair_values_to_be_equal",
-          kwargs={
+          gx.ExpectColumnValuesToNotBeNull(
             "column_A": csv_col,
             "column_B": db_col_renamed
-          }
+          )
+          # gx.ExpectColumnPairValuesToBeEqual(
+          # )
         )
+        # suite.add_expectation(
+        #   type="expect_column_pair_values_to_be_equal",
+        #   kwargs={
+        #     "column_A": csv_col,
+        #     "column_B": db_col_renamed
+        #   }
+        # )
 
   return validation_df
 
