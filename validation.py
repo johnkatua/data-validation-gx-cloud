@@ -227,6 +227,15 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
     print("Source validation failed:", source_results)
     return  
 
+def etl_validation_dataframe(csv_data, db_data, mapping):
+  """
+  Prepares a DF for validation after mapping of data assets
+
+  Args:
+    csv_data: DataFrame loaded from the CSV file
+    db_data: DataFrame loaded from the database.
+    mapping (dict): Dictionary mapping CSV columns to db columns.
+  """
 def main():
   # Load configuration
   config = load_config()
