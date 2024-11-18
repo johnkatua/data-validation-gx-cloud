@@ -299,11 +299,7 @@ def main():
     expectation_suite_name=suite_name
   )
 
-  # target_suite, validation_df = update_expectation_suite(
-  #   context,
-  #   csv_data=df,
-  #   db_data=df_mssql
-  # )
+  target_suite, validation_df = update_expectation_suite()
 
   etl_validation(
     context,
@@ -311,9 +307,9 @@ def main():
     data_asset_name,
     batch_name,
     source_df=df,
-    target_df=None,
+    target_df=validation_df,
     source_suite=source_suite,
-    target_suite=""
+    target_suite=target_suite
   )
 
 if __name__ == "__main__":
