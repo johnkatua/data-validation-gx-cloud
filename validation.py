@@ -175,6 +175,8 @@ def run_validation(context, source_name, asset_name, batch_name, suite, df):
     # Batch parameters
     batch_params = {"dataframe": df}
 
+    print(batch_params)
+
     # Get the dataframe as a Batch
     batch = batch_definition.get_batch(batch_parameters=batch_params)
 
@@ -208,11 +210,15 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
   if not source_results["success"]:
     print("Source validation failed:", source_results)
     return  
+
+  target_df = pd.DataFrame(target_df)
   
   print("Validating target data...")
   target_results = run_validation(
     context, source_name, asset_name, batch_name, target_suite, target_df
   )
+
+  print(target_results)
   if not target_results["success"]:
     print("Target validation failed:", target_results)
     return
