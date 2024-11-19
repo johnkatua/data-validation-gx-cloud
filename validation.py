@@ -209,9 +209,7 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
 
   if not source_results["success"]:
     print("Source validation failed:", source_results)
-    return  
-
-  target_df = pd.DataFrame(target_df)
+    return 
   
   print("Validating target data...")
   target_results = run_validation(
@@ -260,7 +258,8 @@ def etl_validation_dataframe(csv_data, db_data, mapping, suite):
           column_B = db_col_renamed
         )
         suite.add_expectation(expectation)
-  return validation_df
+        
+  return pd.DataFrame(validation_df)
 
 def main():
   # Load configuration
@@ -298,10 +297,6 @@ def main():
 
   # Load data from the local MSSQL database
   df_mssql = load_data_from_db(conn_str=connection_string, query=db_query)
-
-  # print("Data preview:\n", df.head())
-
-  # print("MSSQL Data preview:\n", df_mssql.head())
 
   print("Available data source:", context.list_datasources())
 
