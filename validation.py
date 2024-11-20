@@ -199,9 +199,9 @@ def run_validation(context, source_name, asset_name, batch_name, suite, df):
     # Get the dataframe as a Batch
     batch = batch_definition.get_batch(batch_parameters=batch_params)
 
-    results = batch.validate(suite)
-    return results
-    # return results.describe()
+    if batch_params["dataframe"] is not None:
+      results = batch.validate(suite)
+      return results
   except Exception as e:
     raise RuntimeError(f"Something went wrong: {e}")
 
@@ -258,7 +258,7 @@ def etl_validation_dataframe(csv_data, db_data, mapping, suite):
 
   validation_df = {}
   if mapping is None:
-    return validation_df
+    return
   
   for csv_col, db_col in mapping.items():
     if csv_col in csv_data.columns:
