@@ -147,10 +147,11 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   
   df = etl_validation_dataframe(csv_data, db_data, mapping, suite)
 
-  if df is None:
+  # TODO: To be refactored
+  if expectation_suite_name == "my_df_data_asset - Default Expectation Suite":
     # Inject expectations to suite file
     validate_status_purchase_amount(gx, suite)
-    
+
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
   return suite, df
