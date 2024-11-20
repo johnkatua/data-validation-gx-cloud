@@ -147,8 +147,10 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
   
   df = etl_validation_dataframe(csv_data, db_data, mapping, suite)
 
-  # Inject expectations to suite file
-  validate_status_purchase_amount(gx, suite)
+  if df is None:
+    # Inject expectations to suite file
+    validate_status_purchase_amount(gx, suite)
+    
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
   return suite, df
@@ -198,7 +200,7 @@ def run_validation(context, source_name, asset_name, batch_name, suite, df):
 
     # Get the dataframe as a Batch
     batch = batch_definition.get_batch(batch_parameters=batch_params)
-    
+
     results = batch.validate(suite)
     return results
   except Exception as e:
@@ -229,15 +231,16 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
     print("Source validation failed:", source_results)
     return 
   
-  print("Validating target data...")
-  target_results = run_validation(
-    context, source_name, asset_name, batch_name, target_suite, target_df
-  )
+  if target_df is not None:
+    print("Validating target data...")
+    target_results = run_validation(
+      context, source_name, asset_name, batch_name, target_suite, target_df
+    )
 
-  print(target_results)
-  if not target_results["success"]:
-    print("Target validation failed:", target_results)
-    return
+    print(target_results)
+    if not target_results["success"]:
+      print("Target validation failed:", target_results)
+      return
 
   print("ETL validation completed successfully!")
 
