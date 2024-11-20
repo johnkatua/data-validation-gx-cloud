@@ -22,7 +22,7 @@ def initialize_context(mode="cloud"):
   """Initialize and return the GE DataContext."""
   return gx.get_context(mode=mode)
 
-def get_column_mapping(mapping_name: str, file_path: str = "column_mapping.json") -> dict:
+def get_column_mapping(mapping_name: str, file_path: str = "column_mappings.json") -> dict:
   """
   Retrieve column mapping dynamically from the config file.
 
@@ -38,11 +38,12 @@ def get_column_mapping(mapping_name: str, file_path: str = "column_mapping.json"
     with open(file_path, "r") as file:
       mapping = json.load(file)
 
-    # Retrieve the specified mapping
-    if mapping_name in mapping:
-      return mapping[mapping_name]
-    else:
-      raise KeyError(f"Mapping '{mapping_name}' not found in the mappings.")
+    if mapping_name is not None:
+      # Retrieve the specified mapping
+      if mapping_name in mapping:
+        return mapping[mapping_name]
+      else:
+        raise KeyError(f"Mapping '{mapping_name}' not found in the mappings.")
   except FileNotFoundError as e:
     raise FileNotFoundError(f"Mapping file not found: {e}")
   except json.JSONDecodeError as e:
@@ -256,6 +257,9 @@ def etl_validation_dataframe(csv_data, db_data, mapping, suite):
   """
 
   validation_df = {}
+  if mapping is None:
+    return validation_df
+  
   for csv_col, db_col in mapping.items():
     if csv_col in csv_data.columns:
       validation_df[csv_col] = csv_data[csv_col]
@@ -294,9 +298,10 @@ def main():
   suite_name = config.get("suite_name")
   target_suite_name = config.get("target_suite_name")
   batch_name = config.get("batch_name")
+  mapping_name = config.get("mapping_name")
 
   # Columns mapping
-  columns_mapping = get_column_mapping()
+  columns_mapping = get_column_mapping(mapping_name)
 
   # Initialize GE context
   context = initialize_context()
