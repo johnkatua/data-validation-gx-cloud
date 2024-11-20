@@ -198,10 +198,9 @@ def run_validation(context, source_name, asset_name, batch_name, suite, df):
 
     # Get the dataframe as a Batch
     batch = batch_definition.get_batch(batch_parameters=batch_params)
-
-    if batch_params["dataframe"] is not None:
-      results = batch.validate(suite)
-      return results
+    
+    results = batch.validate(suite)
+    return results
   except Exception as e:
     raise RuntimeError(f"Something went wrong: {e}")
 
