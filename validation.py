@@ -22,9 +22,13 @@ def initialize_context(mode="cloud"):
   """Initialize and return the GE DataContext."""
   return gx.get_context(mode=mode)
 
-def get_column_mapping():
+def get_column_mapping(mapping_name: str, file_path: str = "column_mapping.json") ->:
   """
-  Define the mapping of CSV columns to database table columns
+  Retrieve column mapping dynamically from the config file.
+
+  Args:
+    mapping_name (str): The name of the mapping to retrieve.
+    file_path (str): Path to the mapping file
 
   Returns:
     dict: A dictionary mapping CSV columns to database table columns.
