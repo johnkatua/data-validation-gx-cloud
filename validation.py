@@ -1,3 +1,4 @@
+import os
 import json
 import pandas as pd
 import great_expectations as gx
@@ -8,6 +9,8 @@ from custom_expectations import validate_status_purchase_amount
 
 # Load environment variables from .env file
 load_dotenv()
+
+print(os.environ["CONNECTION_STRING"])
 
 def load_config(config_file="config.json"):
   """Load configuration from a JSON file."""
@@ -296,7 +299,8 @@ def main():
   # Extract configuration values
   data_source_name = config.get("data_source_name")
   data_asset_name = config.get("data_asset_name")
-  connection_string = config.get("connection_string")
+  connection_string = os.environ["CONNECTION_STRING"]
+  # connection_string = config.get("connection_string")
   db_query = config.get("db_query")
   suite_name = config.get("suite_name")
   target_suite_name = config.get("target_suite_name")
