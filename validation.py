@@ -4,7 +4,7 @@ import pandas as pd
 import great_expectations as gx
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from great_expectations.exceptions import DatasourceError, ExpectationSuiteNotFoundError
+from great_expectations.exceptions import DatasourceError, ExpectationSuiteNotFoundError, DataAssetNotFoundError
 from custom_expectations import validate_status_purchase_amount
 
 # Load environment variables from .env file
@@ -93,16 +93,15 @@ def add_data_asset(context, data_source_name, data_asset_name):
     # Retrieve the data source
     data_source = context.data_sources.get(data_source_name)
 
-    assets = data_source.list_assets()
+    print(data_source)
 
-    print(assets)
-
-    if data_source.get_asset(data_asset_name):
+    try:
+      data_source.get_asset(data_asset_name)
       print(f"Data asset '{data_asset_name}' already exists in data source '{data_source_name}'.")
       return
-    # Add the data asset to the data source
-    data_source.add_dataframe_asset(data_asset_name)
-    print(f"Data asset '{data_asset_name}' successfully added to data source '{data_source_name}'.")
+    except LookupError:
+      data_source.add_dataframe_asset(data_asset_name)
+      print(f"Data asset '{data_asset_name}' successfully added to data source '{data_source_name}'.")
   except KeyError:
     raise RuntimeError(f"Data source '{data_source_name}' not found in the context.")
   except Exception as e:
