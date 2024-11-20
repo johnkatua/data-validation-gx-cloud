@@ -10,7 +10,6 @@ from custom_expectations import validate_status_purchase_amount
 # Load environment variables from .env file
 load_dotenv()
 
-print(os.environ["CONNECTION_STRING"])
 
 def load_config(config_file="config.json"):
   """Load configuration from a JSON file."""
