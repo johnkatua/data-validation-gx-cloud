@@ -147,7 +147,7 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
     #get_expectation_suite(expectation_suite_name)
   except DataContextError:
     # Create a new expectation suite if does not exist
-    suite = context.create_expectation_suite(expectation_suite_name)
+    suite = context.suites.add(expectation_suite_name)
   
   df = etl_validation_dataframe(csv_data, db_data, mapping, suite)
 
