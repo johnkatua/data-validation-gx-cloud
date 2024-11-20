@@ -4,6 +4,7 @@ import great_expectations as gx
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from great_expectations.exceptions import DatasourceError, ExpectationSuiteNotFoundError
+from custom_expectations import validate_status_purchase_amount
 
 # Load environment variables from .env file
 load_dotenv()
@@ -129,7 +130,9 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
     suite = context.create_expectation_suite(expectation_suite_name)
   
   df = etl_validation_dataframe(csv_data, db_data, mapping, suite)
-  print(df)
+
+  # Inject expectations to suite file
+  validate_status_purchase_amount(gx, suite)
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
   return suite, df
