@@ -4,7 +4,7 @@ import pandas as pd
 import great_expectations as gx
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from great_expectations.exceptions import DatasourceError, ExpectationSuiteNotFoundError, DataAssetNotFoundError
+from great_expectations.exceptions import DatasourceError, ExpectationSuiteNotFoundError, DataContextError
 from custom_expectations import validate_status_purchase_amount
 
 # Load environment variables from .env file
@@ -145,7 +145,7 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
     # Load the existing expectation suite if it exists
     suite = context.suites.get(name=expectation_suite_name)
     #get_expectation_suite(expectation_suite_name)
-  except ExpectationSuiteNotFoundError:
+  except DataContextError:
     # Create a new expectation suite if does not exist
     suite = context.create_expectation_suite(expectation_suite_name)
   
