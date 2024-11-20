@@ -22,7 +22,7 @@ def initialize_context(mode="cloud"):
   """Initialize and return the GE DataContext."""
   return gx.get_context(mode=mode)
 
-def get_column_mapping(mapping_name: str, file_path: str = "column_mapping.json") ->:
+def get_column_mapping(mapping_name: str, file_path: str = "column_mapping.json") -> dict:
   """
   Retrieve column mapping dynamically from the config file.
 
@@ -33,9 +33,20 @@ def get_column_mapping(mapping_name: str, file_path: str = "column_mapping.json"
   Returns:
     dict: A dictionary mapping CSV columns to database table columns.
   """
-  return {
-    "CustomerID": "CustomerID"
-  }
+  try:
+    # Load the mapping file
+    with open(file_path, "r") as file:
+      mapping = json.load(file)
+
+    # Retrieve the specified mapping
+    if mapping_name in mapping:
+      return mapping[mapping_name]
+    else:
+      raise KeyError(f"Mapping '{mapping_name}' not found in the mappings.")
+  except FileNotFoundError as e:
+    raise FileNotFoundError(f"Mapping file not found: {e}")
+  except json.JSONDecodeError as e:
+    raise ValueError(f"Invalid JSON format in configuration file: {e}")
 
 def load_data_from_db(conn_str, query):
   """
