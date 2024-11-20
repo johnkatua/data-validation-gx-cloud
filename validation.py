@@ -76,9 +76,8 @@ def add_data_source(context, data_source_name):
   """
   try:
     if not any(ds["name"] == data_source_name for ds in context.list_datasources()):
-      context.add_datasource(
-        name=data_source_name,
-        class_name="PandasDatasource"
+      context.data_sources.add_pandas(
+        name=data_source_name
       )
       print(f"Data source '{data_source_name}' added successfully")
     else:
