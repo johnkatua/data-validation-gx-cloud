@@ -93,6 +93,10 @@ def add_data_asset(context, data_source_name, data_asset_name):
     # Retrieve the data source
     data_source = context.data_sources.get(data_source_name)
 
+    assets = data_source.list_assets()
+
+    print(assets)
+
     if data_source.get_asset(data_asset_name):
       print(f"Data asset '{data_asset_name}' already exists in data source '{data_source_name}'.")
       return
