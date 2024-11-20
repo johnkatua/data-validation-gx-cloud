@@ -3,7 +3,7 @@
   "data_asset_name": "customers",
   "batch_name": "my_batch_definition", 
   "db_query": "SELECT * FROM Customer",
-  "suite_name": "customers - Default Expectation Suite",
+  "suite_name": "customers - Default Expectation Suite File",
   "target_suite_name": "customers Suite",
   "mapping_name": "customer_mapping"
 }
