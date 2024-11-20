@@ -171,8 +171,6 @@ def create_batch_definition(context, source_name, asset_name, batch_name):
   try:
     # Retrieve the data asset
     data_asset = context.data_sources.get(source_name).get_asset(asset_name)
-
-    print(data_asset)
     
     # Check if the batch definition already exists
     if not(any(batch.name == batch_name for batch in data_asset.batch_definitions)):
@@ -198,8 +196,6 @@ def run_validation(context, source_name, asset_name, batch_name, suite, df):
 
     # Batch parameters
     batch_params = {"dataframe": df}
-
-    print(batch_params)
 
     # Get the dataframe as a Batch
     batch = batch_definition.get_batch(batch_parameters=batch_params)
@@ -227,8 +223,6 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
   print("Validating Transformed Data...")
   source_results = run_validation(
     context, source_name, asset_name, batch_name, source_suite, source_df)
-  
-  print(source_results)
 
   if not source_results["success"]:
     print("Source validation failed:", source_results)
@@ -240,7 +234,6 @@ def etl_validation(context, source_name, asset_name, batch_name, source_df, targ
       context, source_name, asset_name, batch_name, target_suite, target_df
     )
 
-    print(target_results)
     if not target_results["success"]:
       print("Target validation failed:", target_results)
       return
@@ -299,7 +292,6 @@ def main():
   data_source_name = config.get("data_source_name")
   data_asset_name = config.get("data_asset_name")
   connection_string = os.environ["CONNECTION_STRING"]
-  # connection_string = config.get("connection_string")
   db_query = config.get("db_query")
   suite_name = config.get("suite_name")
   target_suite_name = config.get("target_suite_name")
