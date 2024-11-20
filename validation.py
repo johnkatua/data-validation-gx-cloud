@@ -156,8 +156,6 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
     # Inject expectations to suite file
     validate_status_purchase_amount(gx, suite)
 
-  print(suite)
-
   suite.save()
   print(f"Expectation suite '{expectation_suite_name}' updated successfully.")
   return suite, df
