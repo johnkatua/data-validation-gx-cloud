@@ -146,15 +146,13 @@ def update_expectation_suite(context, csv_data, db_data, mapping, expectation_su
     suite = context.suites.get(name=expectation_suite_name)
     #get_expectation_suite(expectation_suite_name)
   except DataContextError:
-    # suite_name = gx.ExpectationSuite(name=expectation_suite_name)
-    # # Create a new expectation suite if does not exist
-    # suite = context.suites.add(suite_name)
+    # Create a new expectation suite if does not exist
     suite = context.suites.add(gx.ExpectationSuite(name=expectation_suite_name))
   
   df = etl_validation_dataframe(csv_data, db_data, mapping, suite)
 
   # TODO: To be refactored
-  if expectation_suite_name == "customers - Default Expectation Suite":
+  if expectation_suite_name == "customers - Default Expectation Suite File":
     # Inject expectations to suite file
     validate_status_purchase_amount(gx, suite)
 
