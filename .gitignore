@@ -1,5 +1,4 @@
 .env
-config.json
 my_venv/
 __pycache__
 *.pyc

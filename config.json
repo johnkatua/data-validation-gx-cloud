@@ -1,0 +1,9 @@
+{
+  "data_source_name": "my_pandas_data_source",
+  "data_asset_name": "my_df_data_asset",
+  "batch_name": "my_batch_definition", 
+  "db_query": "SELECT * FROM Customer",
+  "suite_name": "my_df_data_asset - Default Expectation Suite",
+  "target_suite_name": "my_df_data_asset Suite",
+  "mapping_name": "customer_mapping"
+}
